@@ -9,121 +9,120 @@
 % DATE: 30.10.14
 %
 % DESCRIPTION
-% Dies ist ein Spiel, in dem der Benutzer eine zufällig generierte Zahl 
-% erraten muss. Dabei hat er eine Anzahl an Versuchen und das 
-% Programm gibt Rückmeldung, ob die Zahl zu hoch oder zu tief
-% geraten wurde.
+% This is a game where the user has to guess a randomly generated number. 
+% He has a number of attempts and the program gives feedback if the number 
+% was too high or too low.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Letztes Spiel auslesen; Spielregeln
+%% Read out last game; Rules of the game
 clc
 clear all
 a = exist('memory.txt','file'); % 0 [does not exist] / else [does exist]
 if (a == 0)
-    disp('Willkommen zu HiLo!')
-    disp('Dies ist dein erstes Spiel.')
+    disp('Welcome to HiLo!')
+    disp('This is your first game.')
 else
-    b = dlmread('memory.txt', '\t', 'A1..A1'); % letzte Zufallszahl
-    c = dlmread('memory.txt', '\t', 'B1..B1'); % gewonnen 1 / verloren 0
-    d = dlmread('memory.txt', '\t', 'C1..C1'); % Anzahl Versuche
-    disp(['Letzes Mal musstest du die Zahl ' num2str(b) ' erraten'])
+    b = dlmread('memory.txt', '\t', 'A1..A1'); % last random number
+    c = dlmread('memory.txt', '\t', 'B1..B1'); % won 1 / lost 0
+    d = dlmread('memory.txt', '\t', 'C1..C1'); % Number of attempts
+    disp(['Last time you had to guess the number ' num2str(b)])
     if (c == 0)
-        disp('was du leider nicht geschafft hast :-(')
+        disp('what you have not managed to do :-(')
     else
-        disp(['was du hervorragend in ' num2str(d) ' Versuchen gelöst hast! :-)'])
+        disp(['which you did excellently in ' num2str(d) ' attempts! :-)'])
     end
-    disp([char(13) 'Hier nochmals die Spielregeln:'])
+    disp([char(13) 'Here again the rules of the game:'])
 end
 
-disp('HiLo bestimmt eine Zufallszahl zwischen Null')
-disp('und einer von dir gewählten Grenze.')
-disp('Versuche die Zahl zu erraten.')
-disp('HiLo teilt dir mit, wieviele Versuche du noch hast')
-disp('und ob du zu hoch oder zu tief geraten hast.')
-disp('Viel Glück!')
-disp([char(13) 'Taste drücken um weiterzufahren...']);
+disp('HiLo determines a random number between zero')
+disp('and one of your chosen limits.')
+disp('Try to guess the number.')
+disp('HiLo tells you how many attempts you have left.')
+disp('and whether you have gone too high or too low.')
+disp('Good luck!')
+disp([char(13) 'Press any key to continue...']);
 pause
 clc
 
-%% Eingabe Grenze; Vergabe Zufallszahl
-disp('Gib eine Obergrenze ein')
-p = input('und drück Enter: ','s');
-p = str2double(p); % gibt NaN zurück, falls keine Zahl
-if ((mod(p,1)~=0) || (isnan(p)) || (p < 0)) % überprüft, ob double, NaN oder minus
-    fprintf(2, 'Das geht leider nicht.\nBitte gib eine positive ganze Zahl ein.\n');
+%% Input limit; assignment of random number
+disp('Enter an upper limit')
+p = input('and press Enter: ','s');
+p = str2double(p); % returns NaN if there is no number
+if ((mod(p,1)~=0) || (isnan(p)) || (p < 0)) % checks if double, NaN or minus
+    fprintf(2, 'This is not possible. \nPlease enter a positive integer.\n');
 %     break;
 else 
     clc
-    disp(['Bereich: 0 - ' num2str(p)]);
+    disp(['Range: 0 - ' num2str(p)]);
     n = randi(p); 
 end 
 
-%% Vergabe der Anzahl Versuche; Initialisierung effektive Versuche & Status
+%% Assignment of the number of attempts; initialization of effective attempts & status
 q = floor(log2(p))+1;
 
-% disp(['Zufallszahl: ' num2str(n)])
-disp(['Versuche: ' num2str(q)])
+% disp(['Randomnumber: ' num2str(n)])
+disp(['Attempts: ' num2str(q)])
 
-e = 1; % Anzahl Versuche
-f = false; % gewonnen: false
+e = 1; % Number of attempts
+f = false; % won: false
 
-%% Durchlauf Versuche; Überprüfen der Eingabe; Ausgabe ob Zahl <>=
+%% Run tests; check the input; output if number <>=
 while (q > 0) 
     
-    r = input([char(13) num2str(e) '. Versuch: '],'s');
+    r = input([char(13) num2str(e) '. Attempt: '],'s');
     r = str2double(r);
     if ((mod(r,1)~=0) || (isnan(r)) || (r < 0) || (r > p))
-        fprintf(2, ['Das geht leider nicht.\nBitte gib eine ganze Zahl zwischen 0 und ' num2str(p) ' ein.\n']);
+        fprintf(2, ['This is not possible. \nPlease enter an integer between 0 and ' num2str(p) '\n']);
         break;
     end 
     
     if(r == n)
-        disp('Jeee')
+        disp('Yeeei')
         f = true;
         break
     elseif(r < n)
-        disp('Die Zahl ist zu tief...')
+        disp('The number is too low...')
     elseif(r > n)
-        disp('Die Zahl ist zu hoch...')
+        disp('The number is too high...')
     end
 
     q = q - 1;
     e = e + 1;
 end
 
-%% Meldung gewonnen resp. verloren
+%% Message won or lost
 if (f == false)
     g = [n 0 e];
     dlmwrite('memory.txt',g,'delimiter','\t')
-    h = questdlg('Du hast verloren. Nochmals?',':-(','Ja','Nein','Ja');
+    h = questdlg('You have lost. Again?',':-(','Yes','No','Yes');
 else
     g = [n 1 e];
     dlmwrite('memory.txt',g,'delimiter','\t')
-    h = questdlg('Du hast gewonnen! Nochmals?',':-)','Ja','Nein','Ja');
+    h = questdlg('You won! Again?',':-)','Yes','No','Yes');
 end
     switch h
-        case 'Ja'
+        case 'Yes'
             clc
             HiLo
-        case 'Nein'
-            disp('tschüüs')
+        case 'No'
+            disp('Ok bye')
     end
     
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% VARIABELVERZEICHNIS
+% VARIABLE DIRECTORY
 % 
-% a     existiert memory.txt?
-% b     Auslesen der ersten Position von memory.txt (Zufallszahl)
-% c     Auslesen der zweiten Position von memory.txt (gewonnen/verloren)
-% d     Auslesen der dritten Position von memory.txt (Anzahl Versuche)
-% e     Counter, Anzahl Versuche
-% f     gewonnen oder verloren (true/false)
-% g     Daten, die in memory.txt geschrieben werden
-% h     Nochmals spielen? (Ja/Nein)
-% n     Zufallszahl zw. 0 und Grenze
-% p     Obergrenze des Zahlenbereiches
-% q     Anzahl Versuche
-% r     Eingabe der Rateversuche
+% a     exists memory. txt?
+% b     Read out the first position of memory.txt (random number)
+% c     Read out the second position of memory.txt (won/lost)
+% d     Read out the third position of memory.txt (number of attempts)
+% e     Counter, number of attempts
+% f     won or lost (true/false)
+% g     Data written in memory.txt
+% h     Play again? (Yes/No)
+% n     Random number between 0 and limit
+% p     Upper limit of the number range
+% q     Number of attempts
+% r     Entering the attempts
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

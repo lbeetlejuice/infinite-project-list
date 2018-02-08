@@ -1,60 +1,60 @@
 public class GameOfLife {
 	public static void main(String[] args){
-		
-		int groesse = (int) Integer.parseInt(args[0]);
-		int generationen = 100; 		
-		int zeit = 100; 				
-		
-		boolean[][] arrayGoL = new boolean[groesse][groesse];
-		
-		fuelleArrayGoL(arrayGoL);		
-		for(int i = 0; i < generationen; i++){
+
+		int size = (int) Integer.parseInt(args[0]);
+		int generations = 100;
+		int time = 100;
+
+		boolean[][] arrayGoL = new boolean[size][size];
+
+		fillArrayGoL(arrayGoL);
+		for(int i = 0; i < generations; i++){
 			try{
 				for(int c=0;c<50;c++){System.out.println("\n");}
 				System.out.println(i+". Generation");
-				neueGeneration(arrayGoL);
-				Thread.sleep(zeit);
+				newGeneration(arrayGoL);
+				Thread.sleep(time);
 			}
 			catch(InterruptedException ire){}
 		}
 	}
-	
+
 //--------------------------------------------------------------------------------------
-	
-	private static int getZufallszahl(int n){
+
+	private static int getRandomNumber(int n){
 		return (int) (Math.random()*(n));
 	}
-	
-	private static void fuelleArrayGoL(boolean[][] array){
-		for(int zeile = 0; zeile < array.length; zeile++){
-			for(int spalte = 0; spalte < array[zeile].length; spalte++){
-				int zahl = getZufallszahl(2)+1;
-				if(zahl == 1){ array[zeile][spalte] = true; }
-				else{ array[zeile][spalte] = false; }
+
+	private static void fillArrayGoL(boolean[][] array){
+		for(int row = 0; row < array.length; row++){
+			for(int column = 0; column < array[row].length; column++){
+				int number = getRandomNumber(2)+1;
+				if(number == 1){ array[row][column] = true; }
+				else{ array[row][column] = false; }
 			}
 		}
 	}
-	
-	private static void neueGeneration(boolean[][] array){
-		boolean[][] neueGen = new boolean[array.length][array[0].length];
-		
-		for (int zeile = 0; zeile < array.length; zeile++){
-			for (int spalte = 0; spalte < array.length; spalte++){
-				int nachbarn = zaehleNachbarn(zeile, spalte, array);
-				
-				if (nachbarn < 2 || nachbarn > 3) {
-					neueGen[zeile][spalte] = false;
-				} 
-				else if(array[zeile][spalte] == true || (array[zeile][spalte] != true && nachbarn == 3)){
-					neueGen[zeile][spalte] = true;
+
+	private static void newGeneration(boolean[][] array){
+		boolean[][] newGen = new boolean[array.length][array[0].length];
+
+		for (int row = 0; row < array.length; row++){
+			for (int column = 0; column < array.length; column++){
+				int neighbor = countNeighbor(row, column, array);
+
+				if (neighbor < 2 || neighbor > 3) {
+					newGen[row][column] = false;
+				}
+				else if(array[row][column] == true || (array[row][column] != true && neighbor == 3)){
+					newGen[row][column] = true;
 				}
 			}
 		}
-		ausgabeArray(neueGen);
-		kopiereArray(neueGen, array);
+		outputArray(newGen);
+		copyArray(newGen, array);
 	}
 
-	private static void ausgabeArray(boolean[][] array){
+	private static void outputArray(boolean[][] array){
 		for(int y=0;y<array.length+1;y++){System.out.print("---");}
 		System.out.println("-");
 		for(int w = 0; w < array.length; w++){
@@ -74,22 +74,22 @@ public class GameOfLife {
 		System.out.println("-");
 	}
 
-	private static void kopiereArray(boolean[][] neu, boolean[][] alt){
-		for (int zeile = 0; zeile < neu.length; zeile++){
-			for (int spalte = 0; spalte < neu.length; spalte++){
-				alt[zeile][spalte] = neu[zeile][spalte];
+	private static void copyArray(boolean[][] new, boolean[][] alt){
+		for (int row = 0; row < new.length; row++){
+			for (int column = 0; column < new.length; column++){
+				alt[row][column] = new[row][column];
 			}
 		}
-	}	
-	
-	private static int zaehleNachbarn(int zeile, int spalte, boolean[][] array){
+	}
+
+	private static int countNeighbor(int row, int column, boolean[][] array){
 		int counter = 0;
 		for (int z = -1; z <= 1; z++) {
 			for (int s = -1; s <= 1; s++) {
-				int aktZeile = (z + zeile + array.length) % array.length;
-				int aktSpalte = (s + spalte + array.length) % array.length;
+				int actRow = (z + row + array.length) % array.length;
+				int actColumn = (s + column + array.length) % array.length;
 				if (s == 0 && z == 0) {
-				} else if(array[aktZeile][aktSpalte] == true){
+				} else if(array[actRow][actColumn] == true){
 						counter = counter + 1;
 				}
 			}
